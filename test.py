@@ -38,15 +38,14 @@ test_df = test_df.drop(['patient id', 'data source'], axis=1)
 # first, we need to classify the dataset (which are positive and which are negative)
 x = train_df.drop(['class'], axis=1)
 y = train_df['class']
-
-#print(x.value_counts())
-#print(y.value_counts())
+print(y.value_counts())  # before resampling
 
 rus = RandomUnderSampler(sampling_strategy=1)
 x_res, y_res = rus.fit_resample(x, y)
-new_train_df = x_res.join(y_res)
-#print(y_res.value_counts())
-#print(x_res.count())
+train_df = x_res.join(y_res)
+train_df = shuffle(train_df)  # shuffling the dataset
 
-print(new_train_df['class'].value_counts())
-print(new_train_df.head())
+print(train_df['class'].value_counts())  # after resampling
+
+test_datagen = ImageDataGenerator(rescale=1.0/255.)
+test_datagen = ImageDataGenerator(rescale=1.0/255.)
