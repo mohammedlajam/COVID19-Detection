@@ -46,3 +46,4 @@ df_majority_downsampled = resample(positive, replace=True, n_samples=13991)
 train_df = pd.concat([negative, df_majority_downsampled])
 
 print(train_df['class'].value_counts())
+#test
