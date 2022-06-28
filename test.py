@@ -11,13 +11,14 @@ https://www.kaggle.com/datasets/andyczhao/covidx-cxr2
 
 # Libraries:
 import pandas as pd
-import numpy as np
-from sklearn.utils import resample
+from imblearn.under_sampling import RandomUnderSampler
+from sklearn.utils import shuffle
+
 
 # 1. Data Preprocessing:
 # 1.1. preparation of text table using pandas:
-# first, in the txt files, columns are separated by SPACE. Hence, we need to change all SPACES to
-# ',' in order to be identified as columns in pandas.
+'''first, in the txt files, columns are separated by SPACE. Hence, we need to change all SPACES to
+',' in order to be identified as columns in pandas.'''
 train_file_path_txt = '/Users/mohammedlajam/Documents/GitHub/COVID19-Detection/Datasets/train.txt'
 test_file_path_txt = '/Users/mohammedlajam/Documents/GitHub/COVID19-Detection/Datasets/test.txt'
 train_path = '/Users/mohammedlajam/Documents/GitHub/COVID19-Detection/Datasets/train'
@@ -33,16 +34,19 @@ train_df = train_df.drop(['patient id', 'data source'], axis=1)
 test_df.columns = ['patient id', 'filename', 'class', 'data source']
 test_df = test_df.drop(['patient id', 'data source'], axis=1)
 
-print(train_df.head())  # see the first 5 rows and columns of train
-print(train_df['class'].value_counts())  # to know the number of positives and negatives.
-print(test_df['class'].value_counts())
-
 # setting both the train and test dataset to same subjects (lowest number) to avoid biasing
 # first, we need to classify the dataset (which are positive and which are negative)
-positive = train_df[train_df['class'] == 'positive']
-negative = train_df[train_df['class'] == 'negative']
+x = train_df.drop(['class'], axis=1)
+y = train_df['class']
 
-df_majority_downsampled = resample(positive, replace=True, n_samples=13991)
-train_df = pd.concat([negative, df_majority_downsampled])
+#print(x.value_counts())
+#print(y.value_counts())
 
-print(train_df['class'].value_counts())
+rus = RandomUnderSampler(sampling_strategy=1)
+x_res, y_res = rus.fit_resample(x, y)
+new_train_df = x_res.join(y_res)
+#print(y_res.value_counts())
+#print(x_res.count())
+
+print(new_train_df['class'].value_counts())
+print(new_train_df.head())
