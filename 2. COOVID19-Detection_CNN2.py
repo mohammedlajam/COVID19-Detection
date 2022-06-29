@@ -13,6 +13,9 @@ https://www.kaggle.com/datasets/andyczhao/covidx-cxr2
 import pandas as pd
 from imblearn.under_sampling import RandomUnderSampler
 from sklearn.utils import shuffle
+from keras.preprocessing.image import ImageDataGenerator
+import os
+import PIL
 
 
 # 1. Data Preprocessing:
@@ -42,10 +45,20 @@ print(y.value_counts())  # before resampling
 
 rus = RandomUnderSampler(sampling_strategy=1)
 x_res, y_res = rus.fit_resample(x, y)
-train_df = x_res.join(y_res)
+train_df = x_res.join(y_res)  # joining the 2 columns in one table into a variable train_df
 train_df = shuffle(train_df)  # shuffling the dataset
 
 print(train_df['class'].value_counts())  # after resampling
+print(train_df.head())
 
-test_datagen = ImageDataGenerator(rescale=1.0/255.)
-test_datagen = ImageDataGenerator(rescale=1.0/255.)
+train_datagen = ImageDataGenerator(rescale=1.0/255.0, validation_split=0.2)
+
+test_datagen = ImageDataGenerator(rescale=1.0/255.0, validation_split=0.2)
+
+train_gen = train_datagen.flow_from_dataframe(dataframe=train_df, directory=train_path, x_col='filename',
+                                              y_col='class', target_size=(200, 200), batch_size=64,
+                                               class_mode='binary', classes=['positive', 'negative'])
+test_gen = test_datagen.flow_from_dataframe(dataframe=test_df, directory=test_path, x_col='filename',
+                                            y_col='class', target_size=(200, 200), batch_size=64,
+                                             class_mode='binary', classes=['positive', 'negative'])
+
