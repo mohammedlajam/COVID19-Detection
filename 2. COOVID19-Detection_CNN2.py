@@ -11,11 +11,20 @@ https://www.kaggle.com/datasets/andyczhao/covidx-cxr2
 
 # Libraries:
 import pandas as pd
+import tensorflow as tf
 from imblearn.under_sampling import RandomUnderSampler
 from sklearn.utils import shuffle
 from keras.preprocessing.image import ImageDataGenerator
+import matplotlib.pyplot as plt
+import numpy as np
+from keras.models import Sequential
+from keras.layers import Conv2D, Flatten, MaxPool2D, Dense, Dropout
 import os
 import PIL
+import cv2
+
+import tensorflow as tf
+from tensorflow import keras
 
 
 # 1. Data Preprocessing:
@@ -51,14 +60,37 @@ train_df = shuffle(train_df)  # shuffling the dataset
 print(train_df['class'].value_counts())  # after resampling
 print(train_df.head())
 
-train_datagen = ImageDataGenerator(rescale=1.0/255.0, validation_split=0.2)
+# using flow_from_dataframe function to link the class of the txt file to the image folder
+train_datagen = ImageDataGenerator(preprocessing_function=tf.keras.applications.vgg16.preprocess_input, rescale=1.0/255.0, validation_split=0.2)
+test_datagen = ImageDataGenerator(preprocessing_function=tf.keras.applications.vgg16.preprocess_input, rescale=1.0/255.0, validation_split=0.2)
 
-test_datagen = ImageDataGenerator(rescale=1.0/255.0, validation_split=0.2)
-
+# preparing the data in a format that the model expects using flow_from_dataframe:
 train_gen = train_datagen.flow_from_dataframe(dataframe=train_df, directory=train_path, x_col='filename',
-                                              y_col='class', target_size=(200, 200), batch_size=64,
-                                               class_mode='binary', classes=['positive', 'negative'])
+                                              y_col='class', classes=['positive', 'negative'],
+                                              target_size=(200, 200), batch_size=64, class_mode='binary')
 test_gen = test_datagen.flow_from_dataframe(dataframe=test_df, directory=test_path, x_col='filename',
-                                            y_col='class', target_size=(200, 200), batch_size=64,
-                                             class_mode='binary', classes=['positive', 'negative'])
+                                            y_col='class', classes=['positive', 'negative'],
+                                            target_size=(200, 200), batch_size=64, class_mode='binary', shuffle=False)
+
+x_train, y_train = next(train_gen)
+x_test, y_test = next(test_gen)
+print(x_train.shape)
+print(y_train.shape)
+print(x_test.shape)
+print(y_test.shape)
+
+# plotting an image as an example:
+plt.imshow(x_train[10])
+plt.show()
+print(y_train[10])
+'''
+def Plot_images(self, imges_arr):
+    fig, axes = plt.subplot(1, 10, figsize=(20, 20))
+    axes = axes.flatten()
+    for img, ax in zip(imges_arr, axes):
+        ax.imshow(img)
+        ax.axes('off')
+    plt.tight_layout()
+    plt.show()
+'''
 
