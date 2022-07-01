@@ -11,27 +11,24 @@ https://www.kaggle.com/datasets/andyczhao/covidx-cxr2
 
 # Libraries:
 import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
 import tensorflow as tf
+from keras.preprocessing.image import ImageDataGenerator
+from keras.models import Sequential
+from keras.layers import Conv2D, Flatten, MaxPool2D, Dense
 from imblearn.under_sampling import RandomUnderSampler
 from sklearn.utils import shuffle
-from keras.preprocessing.image import ImageDataGenerator
-import matplotlib.pyplot as plt
-import numpy as np
-from keras.models import Sequential
-from keras.layers import Conv2D, Flatten, MaxPool2D, Dense, Dropout
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report, confusion_matrix
 import seaborn as sn
-import os
-import PIL
-import cv2
-from tensorflow import keras
 
 
 # 1. Data Preprocessing:
 # 1.1. preparation of text table using pandas:
-'''first, in the txt files, columns are separated by SPACE. Hence, we need to change all SPACES to
-',' in order to be identified as columns in pandas.'''
+'''first, in the txt files, columns are separated by SPACE. Hence, we need before reading the 
+files to change all SPACEs to COMMAs in order to be identified as columns in pandas.'''
+# reading the txt files and the folders of images from the local directory:
 train_file_path_txt = '/Users/mohammedlajam/Documents/GitHub/COVID19-Detection/Datasets/train.txt'
 test_file_path_txt = '/Users/mohammedlajam/Documents/GitHub/COVID19-Detection/Datasets/test.txt'
 train_path = '/Users/mohammedlajam/Documents/GitHub/COVID19-Detection/Datasets/train'
@@ -48,8 +45,6 @@ test_df = test_df.drop(['patient id', 'data source'], axis=1)
 
 # setting both the train and test dataset to same subjects (lowest number) to avoid biasing
 # first, we need to classify the dataset (which are positive and which are negative)
-x = train_df.drop(['class'], axis=1)
-y = train_df['class']
 x = train_df.drop(['class'], axis=1)
 y = train_df['class']
 print(y.value_counts())  # before resampling
@@ -69,8 +64,7 @@ print(f"Negative and positive values of train: {train_df['class'].value_counts()
 print(f"Negative and positive values of validation: {valid_df['class'].value_counts()}")
 print(f"Negative and positive values of test: {test_df['class'].value_counts()}")
 
-# Directory iterator:
-# using flow_from_dataframe function to link the class of the txt file to the image folder
+# using flow_from_dataframe function to link the class of the txt file to the image filename
 train_datagen = ImageDataGenerator(preprocessing_function=tf.keras.applications.vgg16.preprocess_input, rescale=1.0/255.0, validation_split=0.2)
 test_datagen = ImageDataGenerator(preprocessing_function=tf.keras.applications.vgg16.preprocess_input, rescale=1.0/255.0, validation_split=0.2)
 
@@ -101,17 +95,6 @@ plt.imshow(x_test[10])  # plotting one image from the test set
 plt.show()
 print(y_test[10])
 
-'''
-def Plot_images(self, imges_arr):
-    fig, axes = plt.subplot(1, 10, figsize=(20, 20))
-    axes = axes.flatten()
-    for img, ax in zip(imges_arr, axes):
-        ax.imshow(img)
-        ax.axes('off')
-    plt.tight_layout()
-    plt.show()
-'''
-
 # 2. Building a Model (CNN):
 model = Sequential([Conv2D(filters=32, kernel_size=(3, 3), activation='relu', padding='same', input_shape=(200, 200, 3)),
                     MaxPool2D(pool_size=(2, 2), strides=2),
@@ -125,7 +108,17 @@ model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=
 # In this case during fitting the model, we mention only the x parameter (y is not included)
 # because the train_gen is generated from a function ImageDataGenerator, in which the labels
 # are integrated along side with the images.
-model.fit(x=train_gen, validation_data=valid_gen, epochs=1, steps_per_epoch=250, verbose=2)
+history = model.fit(x=train_gen, validation_data=valid_gen, epochs=5, steps_per_epoch=250, verbose=2)
+
+# 2.1. Line the Accuracy vs Epochs:
+plt.plot(history.history['accuracy'], label="Training accuracy")
+plt.plot(history.history['val_accuracy'], label="Test accuracy")
+plt.title('model accuracy')
+plt.ylabel('Accuracy')
+plt.xlabel('Epochs')
+plt.grid()
+plt.legend()
+plt.show()
 
 # predictions:
 # plotting one random image of the test data:
