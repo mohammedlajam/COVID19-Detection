@@ -20,8 +20,7 @@ import numpy as np
 from keras.models import Sequential
 from keras.layers import Conv2D, Flatten, MaxPool2D, Dense, Dropout
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import classification_report
-from sklearn.metrics import confusion_matrix
+from sklearn.metrics import classification_report, confusion_matrix
 import seaborn as sn
 import os
 import PIL
