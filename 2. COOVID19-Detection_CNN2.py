@@ -20,6 +20,8 @@ import numpy as np
 from keras.models import Sequential
 from keras.layers import Conv2D, Flatten, MaxPool2D, Dense, Dropout
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report, confusion_matrix
+import seaborn as sn
 import os
 import PIL
 import cv2
@@ -134,3 +136,20 @@ print(test_gen.classes)  # printing the classes of the test set
 # Making the prediction:
 predictions = model.predict(x=test_gen, verbose=0)
 print(np.round(predictions))  # checking the shape of the output predictions
+
+# Model Evaluation:
+print("Model Evaluation")
+test_loss, test_acc = model.evaluate(test_gen)
+print(f'Model ACCURACY is {test_acc}')
+print(f'Model LOSS is {test_loss}')
+print(classification_report(y_true=test_gen.classes, y_pred=np.argmax(predictions, axis=1)))
+# Confusion Matrix:
+cm = confusion_matrix(y_true=test_gen.classes, y_pred=np.argmax(predictions, axis=1))
+print(cm)
+print(test_gen.class_indices)  # to show the corresponding classes to positive and negative
+# plotting the confusion matrix using seaborn function:
+plt.figure(figsize=(10, 7))
+sn.heatmap(cm, annot=True, fmt='d')
+plt.xlabel("Predicted")
+plt.ylabel("Actual")
+plt.show()
