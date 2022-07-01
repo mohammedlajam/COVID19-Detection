@@ -39,7 +39,6 @@ train_df = pd.read_csv(train_file_path_txt)
 test_df = pd.read_csv(test_file_path_txt)
 # creating a column-names for each column for both train and test datasets
 # dropping the 'patient id and 'data source' as they are not important in our case
-
 train_df.columns = ['patient id', 'filename', 'class', 'data source']
 train_df = train_df.drop(['patient id', 'data source'], axis=1)
 test_df.columns = ['patient id', 'filename', 'class', 'data source']
@@ -124,10 +123,14 @@ model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=
 # In this case during fitting the model, we mention only the x parameter (y is not included)
 # because the train_gen is generated from a function ImageDataGenerator, in which the labels
 # are integrated along side with the images.
-model.fit(x=train_gen, validation_data=valid_gen, epochs=5, steps_per_epoch=250, verbose=2)
+model.fit(x=train_gen, validation_data=valid_gen, epochs=1, steps_per_epoch=250, verbose=2)
 
 # predictions:
+# plotting one random image of the test data:
+plt.imshow(x_test[10])
+plt.show()
+print(y_test[10])  # printing the corresponding label of the random image
+print(test_gen.classes)  # printing the classes of the test set
+# Making the prediction:
 predictions = model.predict(x=test_gen, verbose=0)
-# printing the result in a shape of an array with 1 is the higher probable class
-print(np.round(predictions))
-
+print(np.round(predictions))  # checking the shape of the output predictions
