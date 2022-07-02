@@ -47,24 +47,24 @@ test_df = test_df.drop(['patient id', 'data source'], axis=1)
 # first, we need to classify the dataset (which are positive and which are negative)
 x = train_df.drop(['class'], axis=1)
 y = train_df['class']
-print(y.value_counts())  # before resampling
 
+# 1.2. Data Balancing:
+print(y.value_counts())  # before resampling
 rus = RandomUnderSampler(sampling_strategy=1)
 x_res, y_res = rus.fit_resample(x, y)
 train_df = x_res.join(y_res)  # joining the 2 columns in one table into a variable train_df
 train_df = shuffle(train_df)  # shuffling the dataset
-
 print(train_df['class'].value_counts())  # after resampling
 print(train_df.head())
 
-# splitting the training set into train and validation data:
+# 1.3. Splitting the training set into train and validation data:
 train_df, valid_df = train_test_split(train_df, train_size=0.9, random_state=0)
 print('train, validation and test sets:')
 print(f"Negative and positive values of train: {train_df['class'].value_counts()}")
 print(f"Negative and positive values of validation: {valid_df['class'].value_counts()}")
 print(f"Negative and positive values of test: {test_df['class'].value_counts()}")
 
-# using flow_from_dataframe function to link the class of the txt file to the image filename
+# 1.4. link the class of the txt file to the image filename:
 train_datagen = ImageDataGenerator(preprocessing_function=tf.keras.applications.vgg16.preprocess_input, rescale=1.0/255.0, validation_split=0.2)
 test_datagen = ImageDataGenerator(preprocessing_function=tf.keras.applications.vgg16.preprocess_input, rescale=1.0/255.0, validation_split=0.2)
 
@@ -95,8 +95,10 @@ plt.imshow(x_test[10])  # plotting one image from the test set
 plt.show()
 print(y_test[10])
 
-# 2. Building a Model (CNN):
-model = Sequential([Conv2D(filters=32, kernel_size=(3, 3), activation='relu', padding='same', input_shape=(200, 200, 3)),
+# 2. Building a Model:
+# 2.1. Building a CNN Architechture:
+model = Sequential([Conv2D(filters=32, kernel_size=(3, 3), activation='relu', padding='same',
+                    input_shape=(200, 200, 3)),
                     MaxPool2D(pool_size=(2, 2), strides=2),
                     Conv2D(filters=64, kernel_size=(3, 3), activation='relu', padding='same'),
                     MaxPool2D(pool_size=(2, 2), strides=2),
@@ -105,38 +107,38 @@ model = Sequential([Conv2D(filters=32, kernel_size=(3, 3), activation='relu', pa
                     ])
 model.summary()
 model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
-# In this case during fitting the model, we mention only the x parameter (y is not included)
+
+# 2.2. Training the Model:
+# In this case during fitting the model, the x parameter only to be mentioned (y is not included)
 # because the train_gen is generated from a function ImageDataGenerator, in which the labels
 # are integrated along side with the images.
 history = model.fit(x=train_gen, validation_data=valid_gen, epochs=5, steps_per_epoch=250, verbose=2)
 
-# 2.1. Line the Accuracy vs Epochs:
+# 2.3. Visualization of Accuracy vs Epochs:
 plt.plot(history.history['accuracy'], label="Training accuracy")
-plt.plot(history.history['val_accuracy'], label="Test accuracy")
-plt.title('model accuracy')
+plt.plot(history.history['val_accuracy'], label="Validation accuracy")
+plt.title('Model accuracy')
 plt.ylabel('Accuracy')
 plt.xlabel('Epochs')
 plt.grid()
 plt.legend()
 plt.show()
 
-# predictions:
-# plotting one random image of the test data:
-plt.imshow(x_test[10])
-plt.show()
-print(y_test[10])  # printing the corresponding label of the random image
-print(test_gen.classes)  # printing the classes of the test set
-# Making the prediction:
+# 3. Model Predictions:
 predictions = model.predict(x=test_gen, verbose=0)
 print(np.round(predictions))  # checking the shape of the output predictions
 
-# Model Evaluation:
+# 4. Model Evaluation:
 print("Model Evaluation")
+# 4.1. test accuracy and test loss:
 test_loss, test_acc = model.evaluate(test_gen)
 print(f'Model ACCURACY is {test_acc}')
 print(f'Model LOSS is {test_loss}')
+
+# 4.2. Classification report (Accuracy, Precision, Recall, F1-score)
 print(classification_report(y_true=test_gen.classes, y_pred=np.argmax(predictions, axis=1)))
-# Confusion Matrix:
+
+# 4.3. Confusion Matrix:
 cm = confusion_matrix(y_true=test_gen.classes, y_pred=np.argmax(predictions, axis=1))
 print(cm)
 print(test_gen.class_indices)  # to show the corresponding classes to positive and negative
