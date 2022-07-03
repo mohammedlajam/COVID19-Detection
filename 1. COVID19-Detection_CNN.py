@@ -140,7 +140,28 @@ model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=
 # In this case during fitting the model, we mention only the x parameter (y is not included)
 # because the train_gen is generated from a function ImageDataGenerator, in which the labels
 # are integrated along side with the images.
-model.fit(x=train_gen, validation_data=valid_gen, epochs=1, steps_per_epoch=50, verbose=2)
+history = model.fit(x=train_gen, validation_data=valid_gen, epochs=1, steps_per_epoch=50, verbose=2)
+
+# 2.3. Visualization of Accuracy vs Epochs:
+# Training and validation Accuracy:
+plt.plot(history.history['accuracy'], label='Training accuracy')
+plt.plot(history.history['val_accuracy'], label='Validation accuracy')
+plt.title('Model accuracy')
+plt.ylabel('Accuracy')
+plt.xlabel('Epochs')
+plt.grid()
+plt.legend()
+plt.show()
+
+# Training and validation Loss:
+plt.plot(history.history['loss'], label='Training loss')
+plt.plot(history.history['val_loss'], label='Validation loss')
+plt.title('Model accuracy')
+plt.ylabel('Loss')
+plt.xlabel('Epochs')
+plt.grid()
+plt.legend()
+plt.show()
 
 #### NEW to be added to the second file:
 # predictions:

@@ -115,10 +115,21 @@ model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=
 history = model.fit(x=train_gen, validation_data=valid_gen, epochs=10, steps_per_epoch=250, verbose=2)
 
 # 2.3. Visualization of Accuracy vs Epochs:
-plt.plot(history.history['accuracy'], label="Training accuracy")
-plt.plot(history.history['val_accuracy'], label="Validation accuracy")
+# Training and validation Accuracy:
+plt.plot(history.history['accuracy'], label='Training accuracy')
+plt.plot(history.history['val_accuracy'], label='Validation accuracy')
 plt.title('Model accuracy')
 plt.ylabel('Accuracy')
+plt.xlabel('Epochs')
+plt.grid()
+plt.legend()
+plt.show()
+
+# Training and validation Loss:
+plt.plot(history.history['loss'], label='Training loss')
+plt.plot(history.history['val_loss'], label='Validation loss')
+plt.title('Model accuracy')
+plt.ylabel('Loss')
 plt.xlabel('Epochs')
 plt.grid()
 plt.legend()
