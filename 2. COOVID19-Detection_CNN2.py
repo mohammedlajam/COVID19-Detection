@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 import tensorflow as tf
 from keras.preprocessing.image import ImageDataGenerator
 from keras.models import Sequential
-from keras.layers import Conv2D, Flatten, MaxPool2D, Dense
+from keras.layers import Conv2D, Flatten, MaxPool2D, Dense, Dropout
 from imblearn.under_sampling import RandomUnderSampler
 from sklearn.utils import shuffle
 from sklearn.model_selection import train_test_split
@@ -128,7 +128,7 @@ plt.show()
 # Training and validation Loss:
 plt.plot(history.history['loss'], label='Training loss')
 plt.plot(history.history['val_loss'], label='Validation loss')
-plt.title('Model accuracy')
+plt.title('Model Loss')
 plt.ylabel('Loss')
 plt.xlabel('Epochs')
 plt.grid()
