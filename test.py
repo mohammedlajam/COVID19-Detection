@@ -112,7 +112,7 @@ model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=
 # In this case during fitting the model, the x parameter only to be mentioned (y is not included)
 # because the train_gen is generated from a function ImageDataGenerator, in which the labels
 # are integrated along side with the images.
-history = model.fit(x=train_gen, validation_data=valid_gen, epochs=5, steps_per_epoch=250, verbose=2)
+history = model.fit(x=train_gen, validation_data=valid_gen, epochs=5, batch_size=100, steps_per_epoch=200, verbose=2)
 
 # 2.3. Visualization of Accuracy vs Epochs:
 # Training and validation Accuracy:
@@ -159,4 +159,3 @@ sn.heatmap(cm, annot=True, fmt='d')
 plt.xlabel("Predicted")
 plt.ylabel("Actual")
 plt.show()
-
