@@ -23,25 +23,21 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report, confusion_matrix
 import seaborn as sn
 
-
+# all dataset in one folder:
 # 1. Data Preprocessing:
 # 1.1. preparation of text table using pandas:
 '''first, in the txt files, columns are separated by SPACE. Hence, we need before reading the 
 files to change all SPACEs to COMMAs in order to be identified as columns in pandas.'''
 # reading the txt files and the folders of images from the local directory:
 train_file_path_txt = '/Users/mohammedlajam/Documents/GitHub/COVID19-Detection/Datasets/train.txt'
-test_file_path_txt = '/Users/mohammedlajam/Documents/GitHub/COVID19-Detection/Datasets/test.txt'
 train_path = '/Users/mohammedlajam/Documents/GitHub/COVID19-Detection/Datasets/train'
-test_path = '/Users/mohammedlajam/Documents/GitHub/COVID19-Detection/Datasets/test'
+
 
 train_df = pd.read_csv(train_file_path_txt)
-test_df = pd.read_csv(test_file_path_txt)
 # creating a column-names for each column for both train and test datasets
 # dropping the 'patient id and 'data source' as they are not important in our case
 train_df.columns = ['patient id', 'filename', 'class', 'data source']
 train_df = train_df.drop(['patient id', 'data source'], axis=1)
-test_df.columns = ['patient id', 'filename', 'class', 'data source']
-test_df = test_df.drop(['patient id', 'data source'], axis=1)
 
 # setting both the train and test dataset to same subjects (lowest number) to avoid biasing
 # first, we need to classify the dataset (which are positive and which are negative)
@@ -50,15 +46,17 @@ y = train_df['class']
 
 # 1.2. Data Balancing:
 print(y.value_counts())  # before resampling
+
 rus = RandomUnderSampler(sampling_strategy=1)
 x_res, y_res = rus.fit_resample(x, y)
 train_df = x_res.join(y_res)  # joining the 2 columns in one table into a variable train_df
-train_df = shuffle(train_df)  # shuffling the dataset
+#train_df = shuffle(train_df)  # shuffling the dataset
 print(train_df['class'].value_counts())  # after resampling
 print(train_df.head())
 
-# 1.3. Splitting the training set into train and validation data:
-train_df, valid_df = train_test_split(train_df, train_size=0.9, random_state=0)
+# 1.3. Splitting the training set into train, validation and test data:
+train_df, valid_df = train_test_split(train_df, train_size=0.85, random_state=0)
+train_df, test_df = train_test_split(train_df, train_size=0.85, random_state=0)
 print('train, validation and test sets:')
 print(f"Negative and positive values of train: {train_df['class'].value_counts()}")
 print(f"Negative and positive values of validation: {valid_df['class'].value_counts()}")
@@ -75,7 +73,7 @@ train_gen = train_datagen.flow_from_dataframe(dataframe=train_df, directory=trai
 valid_gen = test_datagen.flow_from_dataframe(dataframe=valid_df, directory=train_path, x_col='filename',
                                              y_col='class', classes=['positive', 'negative'],
                                              target_size=(200, 200), batch_size=100, class_mode='binary')
-test_gen = test_datagen.flow_from_dataframe(dataframe=test_df, directory=test_path, x_col='filename',
+test_gen = test_datagen.flow_from_dataframe(dataframe=test_df, directory=train_path, x_col='filename',
                                             y_col='class', classes=['positive', 'negative'],
                                             target_size=(200, 200), batch_size=100, class_mode='binary', shuffle=False)
 
@@ -100,10 +98,10 @@ print(y_test[10])
 model = Sequential([Conv2D(filters=32, kernel_size=(3, 3), activation='relu', padding='same',
                     input_shape=(200, 200, 3)),
                     MaxPool2D(pool_size=(2, 2), strides=2),
-                    Dropout(0.3),
+
                     Conv2D(filters=64, kernel_size=(3, 3), activation='relu', padding='same'),
                     MaxPool2D(pool_size=(2, 2), strides=2),
-                    Dropout(0.3),
+
                     Flatten(),
                     Dense(units=2, activation='softmax'),
                     ])
@@ -114,7 +112,7 @@ model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=
 # In this case during fitting the model, the x parameter only to be mentioned (y is not included)
 # because the train_gen is generated from a function ImageDataGenerator, in which the labels
 # are integrated along side with the images.
-history = model.fit(x=train_gen, validation_data=valid_gen, epochs=10, steps_per_epoch=250, verbose=2)
+history = model.fit(x=train_gen, validation_data=valid_gen, epochs=5, steps_per_epoch=250, verbose=2)
 
 # 2.3. Visualization of Accuracy vs Epochs:
 # Training and validation Accuracy:
@@ -161,3 +159,4 @@ sn.heatmap(cm, annot=True, fmt='d')
 plt.xlabel("Predicted")
 plt.ylabel("Actual")
 plt.show()
+
