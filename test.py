@@ -10,6 +10,7 @@ https://www.kaggle.com/datasets/andyczhao/covidx-cxr2
 '''
 
 # Libraries:
+import keras.optimizers
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -95,30 +96,31 @@ print(y_test[10])
 
 # 2. Building a Model:
 # 2.1. Building a CNN Architechture:
-model = Sequential([Conv2D(filters=32, kernel_size=(3, 3), activation='relu', padding='same',
+model = Sequential([Conv2D(filters=16, kernel_size=(3, 3), activation='relu', padding='same',
                     input_shape=(200, 200, 3)),
                     MaxPool2D(pool_size=(2, 2), strides=2),
-
-                    Conv2D(filters=64, kernel_size=(3, 3), activation='relu', padding='same'),
+                    Dropout(0.2),
+                    Conv2D(filters=32, kernel_size=(3, 3), activation='relu', padding='same'),
                     MaxPool2D(pool_size=(2, 2), strides=2),
-
+                    Dropout(0.2),
                     Flatten(),
+                    Dense(units=128, activation='relu'),
                     Dense(units=2, activation='softmax'),
                     ])
 model.summary()
-model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.001), loss='sparse_categorical_crossentropy', metrics=['accuracy'])
 
 # 2.2. Training the Model:
 # In this case during fitting the model, the x parameter only to be mentioned (y is not included)
 # because the train_gen is generated from a function ImageDataGenerator, in which the labels
 # are integrated along side with the images.
-history = model.fit(x=train_gen, validation_data=valid_gen, epochs=5, batch_size=100, steps_per_epoch=200, verbose=2)
+history = model.fit(x=train_gen, validation_data=valid_gen, epochs=10, batch_size=100, steps_per_epoch=200, verbose=2)
 
 # 2.3. Visualization of Accuracy vs Epochs:
 # Training and validation Accuracy:
 plt.plot(history.history['accuracy'], label='Training accuracy')
 plt.plot(history.history['val_accuracy'], label='Validation accuracy')
-plt.title('Model accuracy')
+plt.title('Model Accuracy')
 plt.ylabel('Accuracy')
 plt.xlabel('Epochs')
 plt.grid()
