@@ -65,8 +65,10 @@ print(f"Negative and positive values of validation: {valid_df['class'].value_cou
 print(f"Negative and positive values of test: {test_df['class'].value_counts()}")
 
 # 1.4. link the class of the txt file to the image filename:
-train_datagen = ImageDataGenerator(preprocessing_function=tf.keras.applications.vgg16.preprocess_input, rescale=1.0/255.0, validation_split=0.2)
-test_datagen = ImageDataGenerator(preprocessing_function=tf.keras.applications.vgg16.preprocess_input, rescale=1.0/255.0, validation_split=0.2)
+train_datagen = ImageDataGenerator(preprocessing_function=tf.keras.applications.vgg16.preprocess_input,
+                                   rescale=1.0/255.0, validation_split=0.2)
+test_datagen = ImageDataGenerator(preprocessing_function=tf.keras.applications.vgg16.preprocess_input,
+                                  rescale=1.0/255.0, validation_split=0.2)
 
 # preparing the data in a format that the model expects using flow_from_dataframe:
 train_gen = train_datagen.flow_from_dataframe(dataframe=train_df, directory=train_path, x_col='filename',
