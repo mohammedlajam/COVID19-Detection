@@ -40,5 +40,5 @@ Several Model Tuning Methods are involved to improve the performance of the mode
 •	10 Epochs.
  
 ### Confusion Matrix:
-![My Image](/Users/mohammedlajam/Desktop/Model Evaluation and Tuning/2. Adding a Hidden Layer/5. 1hidden (500), 2layers, 32,64, 10 Epochs, 0 dropouts/5. accuracy vs epochs.png)
+
 
