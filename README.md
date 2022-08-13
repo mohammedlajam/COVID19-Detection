@@ -40,5 +40,4 @@ Several Model Tuning Methods are involved to improve the performance of the mode
 •	10 Epochs.
  
 ### Confusion Matrix:
-![5. cm](/Users/mohammedlajam/Documents/GitHub/COVID19-Detection/Model Evaluation and Tuning/2. Adding a Hidden Layer/5. 1hidden (500), 2layers, 32,64, 10 Epochs, 0 dropouts/5. accuracy vs epochs.png)
-/Users/mohammedlajam/Documents/GitHub/COVID19-Detection/Model Evaluation and Tuning/2. Adding a Hidden Layer/5. 1hidden (500), 2layers, 32,64, 10 Epochs, 0 dropouts/5. accuracy vs epochs.png
+![5  cm](https://user-images.githubusercontent.com/88610375/184467985-c5ae24f0-7255-49c7-a00f-66fcf0e8a1c2.png)
