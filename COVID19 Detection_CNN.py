@@ -23,6 +23,7 @@ from sklearn.utils import shuffle
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report, confusion_matrix
 import seaborn as sn
+from keras import regularizers
 
 # all dataset in one folder:
 # 1. Data Preprocessing:
@@ -64,7 +65,9 @@ print(f"Negative and positive values of validation: {valid_df['class'].value_cou
 print(f"Negative and positive values of test: {test_df['class'].value_counts()}")
 
 # 1.4. link the class of the txt file to the image filename:
-train_datagen = ImageDataGenerator(preprocessing_function=tf.keras.applications.vgg16.preprocess_input, rescale=1.0/255.0, validation_split=0.2)
+train_datagen = ImageDataGenerator(preprocessing_function=tf.keras.applications.vgg16.preprocess_input,
+                                   horizontal_flip=True, vertical_flip=True, rotation_range=10,
+                                   rescale=1.0/255.0, validation_split=0.2)
 test_datagen = ImageDataGenerator(preprocessing_function=tf.keras.applications.vgg16.preprocess_input, rescale=1.0/255.0, validation_split=0.2)
 
 # preparing the data in a format that the model expects using flow_from_dataframe:
@@ -97,18 +100,20 @@ print(y_test[10])
 # 2. Building a Model:
 # 2.1. Building a CNN Architechture:
 model = Sequential([Conv2D(filters=16, kernel_size=(3, 3), activation='relu', padding='same',
-                    input_shape=(200, 200, 3)),
+                    input_shape=(200, 200, 3), kernel_regularizer=keras.regularizers.l1(0.01)),
                     MaxPool2D(pool_size=(2, 2), strides=2),
                     Dropout(0.2),
-                    Conv2D(filters=32, kernel_size=(3, 3), activation='relu', padding='same'),
+                    Conv2D(filters=32, kernel_size=(3, 3), activation='relu', padding='same',
+                           kernel_regularizer=keras.regularizers.l1(0.01)),
                     MaxPool2D(pool_size=(2, 2), strides=2),
                     Dropout(0.2),
                     Flatten(),
+                    Dense(units=500, activation='relu'),
                     Dense(units=128, activation='relu'),
                     Dense(units=2, activation='softmax'),
                     ])
 model.summary()
-model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.001), loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.001), loss='binary_crossentropy', metrics=['accuracy'])
 
 # 2.2. Training the Model:
 # In this case during fitting the model, the x parameter only to be mentioned (y is not included)
@@ -161,4 +166,3 @@ sn.heatmap(cm, annot=True, fmt='d')
 plt.xlabel("Predicted")
 plt.ylabel("Actual")
 plt.show()
-# trial
