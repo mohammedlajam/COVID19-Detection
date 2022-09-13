@@ -165,5 +165,3 @@ sn.heatmap(cm, annot=True, fmt='d')
 plt.xlabel("Predicted")
 plt.ylabel("Actual")
 plt.show()
-
-#test
