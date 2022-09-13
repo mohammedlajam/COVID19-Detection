@@ -52,7 +52,7 @@ print(y.value_counts())  # before resampling
 rus = RandomUnderSampler(sampling_strategy=1)
 x_res, y_res = rus.fit_resample(x, y)
 train_df = x_res.join(y_res)  # joining the 2 columns in one table into a variable train_df
-#train_df = shuffle(train_df)  # shuffling the dataset
+train_df = shuffle(train_df)  # shuffling the dataset
 print(train_df['class'].value_counts())  # after resampling
 print(train_df.head())
 
@@ -99,19 +99,18 @@ print(y_test[10])
 
 # 2. Building a Model:
 # 2.1. Building a CNN Architechture:
-model = Sequential([Conv2D(filters=16, kernel_size=(3, 3), activation='relu', padding='same',
-                    input_shape=(200, 200, 3), kernel_regularizer=keras.regularizers.l1(0.01)),
+model = Sequential([Conv2D(filters=32, kernel_size=(3, 3), activation='relu', padding='same',
+                    input_shape=(200, 200, 3),
                     MaxPool2D(pool_size=(2, 2), strides=2),
                     Dropout(0.2),
-                    Conv2D(filters=32, kernel_size=(3, 3), activation='relu', padding='same',
-                           kernel_regularizer=keras.regularizers.l1(0.01)),
+                    Conv2D(filters=64, kernel_size=(3, 3), activation='relu', padding='same',
                     MaxPool2D(pool_size=(2, 2), strides=2),
                     Dropout(0.2),
                     Flatten(),
                     Dense(units=500, activation='relu'),
-                    Dense(units=128, activation='relu'),
                     Dense(units=2, activation='softmax'),
                     ])
+                    
 model.summary()
 model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.001), loss='binary_crossentropy', metrics=['accuracy'])
 
