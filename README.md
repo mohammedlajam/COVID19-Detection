@@ -14,7 +14,7 @@ Train Folder: it contains all the images of the train dataset, where the images 
 Test Folder: it contains all the images of the train dataset, where the images named by File name only (Not mentioned positive or negative).
 Train and test txt file contain (Patient ID, File name, Class, Data source).
 
-### Step 2: data preprocessing:
+### Step 2: Data Preprocessing:
 First, we need to connect the file name, which is associated with the name of the images, with the txt file, so that we know the class of each image whether it is positive or negative.
 At this stage, we have imbalance between positive and negative X-Ray images. Hence, Random Under Sampler function was used to balance the 2 classes in the dataset.
 Next, the dataset is divided into train, validation and test sets.
@@ -23,7 +23,7 @@ Then, ImageDataGenerator function from Keras were used to normalize and resizing
 ### Step 3: Building and training the model:
 A CNN Deep Learning model is built to classify X-Ray images and it was trained using Adam Optimizer.
 
-### Step 4: Model prediction:
+### Step 4: Model Prediction:
 At this stage, the test set is used to make predictions based on the trained model.
 
 ### Step 5: Model Evaluation:
