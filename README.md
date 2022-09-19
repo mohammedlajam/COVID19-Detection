@@ -1,12 +1,10 @@
-# COVID19-Detection
+# COVID19 Detection
 
 ## Introduction:
 Chest X-Ray is one of the methods used to identify whether a subject is COVID-19 positive or negative. The project aims to classify X-Ray images, whether it is positive or negative based on training a model using CNN model (Deep Learning) on a pre-defined data.
 
 ## Accessing the data:
 The project and the results are based 29000 Images, which can be accessed through this link form [Kaggle](https://www.kaggle.com/datasets/andyczhao/covidx-cxr2)
-
-Notes to be taken care of, while running the code:
 
 ## Steps of the project:
 ### Step 1: Data collection:
@@ -39,6 +37,3 @@ Several Model Tuning Methods are involved to improve the performance of the mode
 •	No Dropout.
 •	No Data Augmentation.
 •	10 Epochs.
- 
-### Confusion Matrix:
-![5  cm](https://user-images.githubusercontent.com/88610375/184467985-c5ae24f0-7255-49c7-a00f-66fcf0e8a1c2.png)
